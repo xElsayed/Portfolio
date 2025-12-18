@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ElSayed Elkholy | Cybersecurity Portfolio</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts (Inter for body, Fira Code for mono/terminal) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Custom Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    },
+                    colors: {
+                        'cyber-bg': '#0a0f18', // A very dark blue, almost black
+                        'cyber-surface': '#121a2a',
+                        'cyber-primary': '#16a34a', // A vibrant, "hacker" green
+                        'cyber-secondary': '#22d3ee', // A bright cyan
+                        'cyber-text': '#c8d8e8',
+                        'cyber-muted': '#5a687c',
+                    },
+                    animation: {
+                        typing: 'typing 3.5s steps(40, end) infinite, blink-caret .75s step-end infinite',
+                        'blink-caret': 'blink-caret .75s step-end infinite',
+                        'fade-in': 'fadeIn 0.5s ease-out',
+                    },
+                    keyframes: {
+                        typing: {
+                            '0%': { width: '0%' },
+                            '50%': { width: '100%' },
+                            '100%': { width: '100%' },
+                        },
+                        'blink-caret': {
+                            'from, to': { 'border-color': 'transparent' },
+                            '50%': { 'border-color': 'white' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: 0, transform: 'translateY(10px)' },
+                            '100%': { opacity: 1, transform: 'translateY(0)' },
+                        },
+                    },
+                    textShadow: {
+                        'glow': '0 0 8px rgba(22, 163, 74, 0.7)',
+                    },
+                },
+            },
+        };
+    </script>
+
+    <!-- Custom Styles -->
+    <style>
+        body {
+            /* Subtle scanlines effect for the terminal feel */
+            background-image: linear-gradient(0deg, transparent 50%, rgba(22, 163, 74, 0.03) 50%);
+            background-size: 100% 4px;
+            overflow-x: hidden; /* Prevent horizontal scroll from animations */
+        }
+
+        .text-glow {
+            text-shadow: 0 0 8px rgba(22, 163, 74, 0.7);
+        }
+        
+        /* Custom scrollbar for terminal aesthetic */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0f18;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #16a34a;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #22c55e;
+        }
+
+        .nav-link.active {
+            color: #16a34a;
+            font-weight: 700;
+        }
+
+        /* For fade-in on scroll */
+        .section-hidden {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+        }
+        .section-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+
+<body class="bg-cyber-bg text-cyber-text font-sans antialiased">
+
+    <!-- Interactive Particle Background -->
+    <canvas id="particle-bg" class="fixed top-0 left-0 w-full h-full z-[-1]"></canvas>
+
+    <!-- Header -->
+    <header class="sticky top-0 z-50 w-full bg-cyber-bg/70 backdrop-blur-md border-b border-cyber-surface/50">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo / Name -->
+                <a href="#home" class="font-mono text-2xl font-bold text-cyber-primary text-glow">
+                    E.Elkholy<span class="text-white">_</span>
+                </a>
+
+                <!-- Live Clock -->
+                <div class="hidden lg:block font-mono text-lg text-cyber-secondary">
+                    <span id="live-clock"></span>
+                </div>
+                
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex md:items-center md:space-x-4">
+                    <a href="#home" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-cyber-text hover:text-cyber-primary transition-colors">/home</a>
+                    <a href="#toolkit" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-cyber-text hover:text-cyber-primary transition-colors">/toolkit</a>
+                    <a href="#projects" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-cyber-text hover:text-cyber-primary transition-colors">/projects</a>
+                    <a href="#experience" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-cyber-text hover:text-cyber-primary transition-colors">/experience</a>
+                    <a href="#contact" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-cyber-text hover:text-cyber-primary transition-colors">/contact</a>
+                </div>
+                
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-cyber-muted hover:text-white hover:bg-cyber-surface">
+                        <span class="sr-only">Open main menu</span>
+                        <!-- Menu Icon -->
+                        <svg id="menu-icon-open" class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                        <!-- Close Icon -->
+                        <svg id="menu-icon-close" class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- Mobile Menu (collapsible) -->
+        <div id="mobile-menu" class="hidden md:hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#home" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-cyber-text hover:text-cyber-primary hover:bg-cyber-surface transition-colors">/home</a>
+                <a href="#toolkit" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-cyber-text hover:text-cyber-primary hover:bg-cyber-surface transition-colors">/toolkit</a>
+                <a href="#projects" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-cyber-text hover:text-cyber-primary hover:bg-cyber-surface transition-colors">/projects</a>
+                <a href="#experience" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-cyber-text hover:text-cyber-primary hover:bg-cyber-surface transition-colors">/experience</a>
+                <a href="#contact" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-cyber-text hover:text-cyber-primary hover:bg-cyber-surface transition-colors">/contact</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <!-- ===== Hero Section ===== -->
+        <section id="home" class="min-h-screen flex items-center pt-16 pb-20">
+            <div class="w-full flex flex-col md:flex-row items-center justify-between gap-12">
+                <!-- Text Content -->
+                <div class="md:w-2/3">
+                    <span class="font-mono text-cyber-primary">Connecting to [ElSayed Elkholy]...</span>
+                    <h1 class="text-4xl md:text-6xl font-bold text-white my-4">ElSayed Elkholy</h1>
+                    
+                    <!-- Typing Animation -->
+                    <div class="font-mono text-2xl md:text-4xl text-cyber-secondary font-bold">
+                        <span class="text-cyber-primary">></span>
+                        <span id="typing-text" class="border-r-4 border-white"></span>
+                    </div>
+                    
+                    <p class="mt-6 text-lg md:text-xl max-w-3xl text-cyber-text">
+                        Passionate Cybersecurity enthusiast with a strong foundation in analyzing and mitigating cyber threats. Committed to leveraging expertise in network security and ethical hacking to protect digital infrastructures.
+                    </p>
+                    <div class="mt-8 flex flex-col sm:flex-row gap-4">
+                        <a href="#projects" class="inline-block px-8 py-3 bg-cyber-primary text-cyber-bg font-bold rounded-md hover:bg-green-500 transition-colors text-center">
+                            [ View Projects ]
+                        </a>
+                        <a href="ElSayed_Elkholy_CV.pdf" download="ElSayed_Elkholy_CV.pdf" class="inline-block px-8 py-3 bg-cyber-surface text-cyber-primary font-mono rounded-md hover:bg-gray-700 transition-colors text-center">
+                            Download_CV.pdf
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Image Content -->
+                <div class="md:w-1/3 w-full max-w-xs mx-auto mt-10 md:mt-0">
+                    <img src="photo.jpg" alt="ElSayed Elkholy" class="rounded-full border-4 border-cyber-primary shadow-lg shadow-cyber-primary/30 w-full h-auto object-cover">
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== Toolkit Section ===== -->
+        <section id="toolkit" class="py-20 section-hidden">
+            <h2 class="text-3xl md:text-4xl font-mono font-bold text-white mb-12">
+                <span class="text-cyber-primary">[</span> Technical Toolkit <span class="text-cyber-primary">]</span>
+            </h2>
+            
+            <h3 class="font-mono text-2xl font-bold text-cyber-secondary mb-6">// Security Tools</h3>
+            <div class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-4 mb-8">
+                <!-- Wazuh -->
+                <div class="flex flex-col items-center text-center p-4 bg-cyber-surface rounded-lg border border-cyber-muted/30 transition-all duration-300 hover:bg-cyber-primary/20 hover:border-cyber-primary/50">
+                    <svg class="w-12 h-12 text-cyber-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15l-3.5-3.5a1 1 0 011.4-1.4L12 12.2l2.1-2.1a1 1 0 011.4 1.4L12 15zm0 0v6m0-6l3.5 3.5m-3.5-3.5L8.5 11.5M12 3v2m0 16v-2m4-12l1.4-1.4M6.6 6.6L5.2 5.2m12.2 12.2l1.4 1.4M6.6 17.4l-1.4 1.4"></path></svg>
+                    <p class="mt-2 font-mono text-sm text-cyber-text">Wazuh</p>
+                </div>
+                <!-- Metasploit -->
+                <div class="flex flex-col items-center text-center p-4 bg-cyber-surface rounded-lg border border-cyber-muted/30 transition-all duration-300 hover:bg-cyber-primary/20 hover:border-cyber-primary/50">
+                    <svg class="w-12 h-12 text-cyber-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.52 4.675a1 1 0 00.95.69h4.916c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.52 4.675c.3.921-.755 1.688-1.54 1.118l-3.976-2.888a1 1 0 00-1.175 0l-3.976 2.888c-.784.57-1.838-.197-1.54-1.118l1.52-4.675a1 1 0 00-.363-1.118L.93 10.1c-.783-.57-.38-1.81.588-1.81h4.916a1 1 0 00.95-.69l1.52-4.675z"></path></svg>
+                    <p class="mt-2 font-mono text-sm text-cyber-text">Metasploit</p>
+                </div>
+                <!-- Wireshark -->
+                <div class="flex flex-col items-center text-center p-4 bg-cyber-surface rounded-lg border border-cyber-muted/30 transition-all duration-300 hover:bg-cyber-primary/20 hover:border-cyber-primary/50">
+                    <svg class="w-12 h-12 text-cyber-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l-7-7 7-7 7 7-7 7z"></path><path d="M12.7 12.3l-1.4 1.4"></path><path d="M11.3 10.9l-1.4 1.4"></path></svg>
+                    <p class="mt-2 font-mono text-sm text-cyber-text">Wireshark</p>
+                </div>
+                <!-- Kali Linux -->
+                <div class="flex flex-col items-center text-center p-4 bg-cyber-surface rounded-lg border border-cyber-muted/30 transition-all duration-300 hover:bg-cyber-primary/20 hover:border-cyber-primary/50">
+                    <svg class="w-12 h-12 text-cyber-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L3 10.25l6.75-6.75M14.25 7l6.75 6.75-6.75 6.75"></path></svg>
+                    <p class="mt-2 font-mono text-sm text-cyber-text">Kali Linux</p>
+                </div>
+                <!-- Palo Alto -->
+                <div class="flex flex-col items-center text-center p-4 bg-cyber-surface rounded-lg border border-cyber-muted/30 transition-all duration-300 hover:bg-cyber-primary/20 hover:border-cyber-primary/50">
+                    <svg class="w-12 h-12 text-cyber-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11V5.5A2.5 2.5 0 0110.5 3h3A2.5 2.5 0 0116 5.5V11a13.916 13.916 0 00-1.807 7.431l.054.09m-3.44 2.04c.004 0 .007 0 .011 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.01 0 .02 0 .03 0c.M12 21c-3.517 0-6.799-1.009-9.571-2.753m19.142 0A13.916 13.916 0 0016 11V5.5A2.5 2.5 0 0013.5 3h-3A2.5 2.5 0 008 5.5V11c0 3.517 1.009 6.799 2.753 9.571m3.44 2.04l-.054-.09A13.916 13.916 0 0116 11V5.5A2.5 2.5 0 0013.5 3h-3A2.5 2.5 0 008 5.5V11a13.916 13.916 0 011.807 7.431l-.054.09m3.44-2.04c-.004 0-.007 0-.011 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 0c-.01 0-.02 0-.03 Red"></path></svg>
+                    <p class="mt-2 font-mono text-sm text-cyber-text">Palo Alto</p>
+                </div>
+                <!-- Fortinet -->
+                <div class="flex flex-col items-center text-center p-4 bg-cyber-surface rounded-lg border border-cyber-muted/30 transition-all duration-300 hover:bg-cyber-primary/20 hover:border-cyber-primary/50">
+                    <svg class="w-12 h-12 text-cyber-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21s8-4 8-10V5l-8-3-8 3v6c0 6 8 10 8 10z"></path></svg>
+                    <p class="mt-2 font-mono text-sm text-cyber-text">Fortinet</p>
+                </div>
+            </div>
+            
+            <h3 class="font-mono text-2xl font-bold text-cyber-secondary mb-6">// Networking & Scripting</h3>
+            <div class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-4">
+                <!-- Python -->
+                <div class="flex flex-col items-center text-center p-4 bg-cyber-surface rounded-lg border border-cyber-muted/30 transition-all duration-300 hover:bg-cyber-primary/20 hover:border-cyber-primary/50">
+                    <svg class="w-12 h-12 text-cyber-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 16l-4-16M6 9h12M6 15h12"></path></svg>
+                    <p class="mt-2 font-mono text-sm text-cyber-text">Python</p>
+                </div>
+                <!-- Bash -->
+                <div class="flex flex-col items-center text-center p-4 bg-cyber-surface rounded-lg border border-cyber-muted/30 transition-all duration-300 hover:bg-cyber-primary/20 hover:border-cyber-primary/50">
+                    <svg class="w-12 h-12 text-cyber-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    <p class="mt-2 font-mono text-sm text-cyber-text">Bash</p>
+                </div>
+                <!-- Cisco -->
+                <div class="flex flex-col items-center text-center p-4 bg-cyber-surface rounded-lg border border-cyber-muted/30 transition-all duration-300 hover:bg-cyber-primary/20 hover:border-cyber-primary/50">
+                    <svg class="w-12 h-12 text-cyber-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7"></path></svg>
+                    <p class="mt-2 font-mono text-sm text-cyber-text">Cisco (VLAN, OSPF)</p>
+                </div>
+                 <!-- Linux -->
+                <div class="flex flex-col items-center text-center p-4 bg-cyber-surface rounded-lg border border-cyber-muted/30 transition-all duration-300 hover:bg-cyber-primary/20 hover:border-cyber-primary/50">
+                    <svg class="w-12 h-12 text-cyber-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 8c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path></svg>
+                    <p class="mt-2 font-mono text-sm text-cyber-text">Linux (Ubuntu)</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== Projects Section ===== -->
+        <section id="projects" class="py-20 section-hidden">
+            <h2 class="text-3xl md:text-4xl font-mono font-bold text-white mb-12">
+                <span class="text-cyber-primary">[</span> Project Case Studies <span class="text-cyber-primary">]</span>
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+                <!-- Project 1: Wazuh -->
+                <div class="bg-cyber-surface rounded-lg border border-cyber-muted/30 overflow-hidden flex flex-col transition-all duration-300 hover:shadow-lg hover:shadow-cyber-primary/30 hover:-translate-y-1">
+                    <div class="h-48 w-full flex items-center justify-center bg-cyber-bg/50">
+                        <svg class="w-24 h-24 text-cyber-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15l-3.5-3.5a1 1 0 011.4-1.4L12 12.2l2.1-2.1a1 1 0 011.4 1.4L12 15zm0 0v6m0-6l3.5 3.5m-3.5-3.5L8.5 11.5M12 3v2m0 16v-2m4-12l1.4-1.4M6.6 6.6L5.2 5.2m12.2 12.2l1.4 1.4M6.6 17.4l-1.4 1.4"></path></svg>
+                    </div>
+                    <div class="p-6 flex flex-col flex-grow">
+                        <h3 class="font-mono text-xl font-bold text-white">Wazuh SIEM: Real-Time IP Blocking</h3>
+                        <p class="text-cyber-text mt-2 mb-4 flex-grow">Installed and configured a full Wazuh SIEM stack to detect and block malicious IPs in real-time using Active Response.</p>
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            <span class="bg-cyber-bg px-3 py-1 rounded-full text-sm font-mono text-cyber-primary">Wazuh</span>
+                            <span class="bg-cyber-bg px-3 py-1 rounded-full text-sm font-mono text-cyber-text">SIEM</span>
+                            <span class="bg-cyber-bg px-3 py-1 rounded-full text-sm font-mono text-cyber-text">Active Response</span>
+                        </div>
+                        <button onclick="openModal('wazuh-modal')" class="mt-auto w-full px-4 py-2 bg-cyber-bg text-cyber-primary font-mono rounded-md hover:bg-cyber-primary hover:text-cyber-bg transition-colors">
+                            View Case Study
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Project 2: SOC Simulation -->
+                <div class="bg-cyber-surface rounded-lg border border-cyber-muted/30 overflow-hidden flex flex-col transition-all duration-300 hover:shadow-lg hover:shadow-cyber-primary/30 hover:-translate-y-1">
+                    <div class="h-48 w-full flex items-center justify-center bg-cyber-bg/50">
+                        <svg class="w-24 h-24 text-cyber-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12 12 0 0012 21.697z"></path></svg>
+                    </div>
+                    <div class="p-6 flex flex-col flex-grow">
+                        <h3 class="font-mono text-xl font-bold text-white">SOC Simulation (TryHackMe)</h3>
+                        <p class="text-cyber-text mt-2 mb-4 flex-grow">Completed SOC simulation labs to practice security operations, analyzing logs and network traffic to identify and respond to cyber threats.</p>
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            <span class="bg-cyber-bg px-3 py-1 rounded-full text-sm font-mono text-cyber-primary">TryHackMe</span>
+                            <span class="bg-cyber-bg px-3 py-1 rounded-full text-sm font-mono text-cyber-text">Wireshark</span>
+                            <span class="bg-cyber-bg px-3 py-1 rounded-full text-sm font-mono text-cyber-text">Incident Response</span>
+                        </div>
+                        <button onclick="openModal('soc-modal')" class="mt-auto w-full px-4 py-2 bg-cyber-bg text-cyber-primary font-mono rounded-md hover:bg-cyber-primary hover:text-cyber-bg transition-colors">
+                            View Case Study
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Project 3: Pen Testing -->
+                <div class="bg-cyber-surface rounded-lg border border-cyber-muted/30 overflow-hidden flex flex-col transition-all duration-300 hover:shadow-lg hover:shadow-cyber-primary/30 hover:-translate-y-1">
+                    <div class="h-48 w-full flex items-center justify-center bg-cyber-bg/50">
+                        <svg class="w-24 h-24 text-cyber-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12l-3-3m0 0l-3 3m3-3v12M9 21h6"></path></svg>
+                    </div>
+                    <div class="p-6 flex flex-col flex-grow">
+                        <h3 class="font-mono text-xl font-bold text-white">Penetration Testing Labs (TryHackMe)</h3>
+                        <p class="text-cyber-text mt-2 mb-4 flex-grow">Practiced ethical hacking techniques using Metasploit and Kali Linux to identify vulnerabilities, network reconnaissance, and attack simulation.</p>
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            <span class="bg-cyber-bg px-3 py-1 rounded-full text-sm font-mono text-cyber-primary">Metasploit</span>
+                            <span class="bg-cyber-bg px-3 py-1 rounded-full text-sm font-mono text-cyber-text">Kali Linux</span>
+                            <span class="bg-cyber-bg px-3 py-1 rounded-full text-sm font-mono text-cyber-text">Ethical Hacking</span>
+                        </div>
+                        <button onclick="openModal('pentest-modal')" class="mt-auto w-full px-4 py-2 bg-cyber-bg text-cyber-primary font-mono rounded-md hover:bg-cyber-primary hover:text-cyber-bg transition-colors">
+                            View Case Study
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Project 4: Wireshark -->
+                <div class="bg-cyber-surface rounded-lg border border-cyber-muted/30 overflow-hidden flex flex-col transition-all duration-300 hover:shadow-lg hover:shadow-cyber-primary/30 hover:-translate-y-1">
+                    <div class="h-48 w-full flex items-center justify-center bg-cyber-bg/50">
+                        <!-- Simple Shark Fin SVG -->
+                        <svg class="w-24 h-24 text-cyber-primary" viewBox="0 0 100 100" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M95 90 C 80 75, 70 70, 50 70 C 30 70, 20 75, 5 90 C 5 90, 5 95, 5 95 L 95 95 C 95 95, 95 90, 95 90 Z M 50 10 C 50 10, 45 40, 30 60 C 30 60, 60 60, 70 60 C 85 40, 50 10, 50 10 Z"/>
+                        </svg>
+                    </div>
+                    <div class="p-6 flex flex-col flex-grow">
+                        <h3 class="font-mono text-xl font-bold text-white">Wireshark Network Analysis</h3>
+                        <p class="text-cyber-text mt-2 mb-4 flex-grow">Captured and analyzed network packets to identify anomalies, document findings, and recommend mitigation strategies to enhance security.</p>
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            <span class="bg-cyber-bg px-3 py-1 rounded-full text-sm font-mono text-cyber-primary">Wireshark</span>
+                            <span class="bg-cyber-bg px-3 py-1 rounded-full text-sm font-mono text-cyber-text">Network Analysis</span>
+                        </div>
+                        <button onclick="openModal('wireshark-modal')" class="mt-auto w-full px-4 py-2 bg-cyber-bg text-cyber-primary font-mono rounded-md hover:bg-cyber-primary hover:text-cyber-bg transition-colors">
+                            View Case Study
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Project 5: Cisco Network -->
+                <div class="bg-cyber-surface rounded-lg border border-cyber-muted/30 overflow-hidden flex flex-col transition-all duration-300 hover:shadow-lg hover:shadow-cyber-primary/30 hover:-translate-y-1">
+                    <div class="h-48 w-full flex items-center justify-center bg-cyber-bg/50">
+                        <svg class="w-24 h-24 text-cyber-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14v-4M8 12h8"></path></svg>
+                    </div>
+                    <div class="p-6 flex flex-col flex-grow">
+                        <h3 class="font-mono text-xl font-bold text-white">Network Security Simulation</h3>
+                        <p class="text-cyber-text mt-2 mb-4 flex-grow">Built secure LAN topologies in Cisco Packet Tracer, implementing VLANs, OSPF, and ACLs. Simulated attacks to test topology resilience.</p>
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            <span class="bg-cyber-bg px-3 py-1 rounded-full text-sm font-mono text-cyber-primary">Cisco</span>
+                            <span class="bg-cyber-bg px-3 py-1 rounded-full text-sm font-mono text-cyber-text">VLANs</span>
+                            <span class="bg-cyber-bg px-3 py-1 rounded-full text-sm font-mono text-cyber-text">OSPF</span>
+                            <span class="bg-cyber-bg px-3 py-1 rounded-full text-sm font-mono text-cyber-text">ACLs</span>
+                        </div>
+                        <button onclick="openModal('cisco-modal')" class="mt-auto w-full px-4 py-2 bg-cyber-bg text-cyber-primary font-mono rounded-md hover:bg-cyber-primary hover:text-cyber-bg transition-colors">
+                            View Case Study
+                        </button>
+                    </div>
+                </div>
+                
+            </div>
+        </section>
+
+        <!-- ===== Experience & Certs Section ===== -->
+        <section id="experience" class="py-20 section-hidden">
+            <h2 class="text-3xl md:text-4xl font-mono font-bold text-white mb-16">
+                <span class="text-cyber-primary">[</span> Career &amp; Certifications <span class="text-cyber-primary">]</span>
+            </h2>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
+                <!-- Experience Timeline -->
+                <div>
+                    <h3 class="font-mono text-2xl font-bold text-cyber-secondary mb-8">// Experience_Log</h3>
+                    <ol class="relative border-l border-cyber-muted/50">                  
+                        <li class="mb-10 ml-6">
+                            <span class="absolute flex items-center justify-center w-6 h-6 bg-cyber-primary rounded-full -left-3 ring-8 ring-cyber-bg">
+                                <svg class="w-3 h-3 text-cyber-bg" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path></svg>
+                            </span>
+                            <h4 class="flex items-center mb-1 text-lg font-semibold text-white">Cyber Security Incident Response Analyst Trainee</h4>
+                            <time class="block mb-2 text-sm font-normal leading-none text-cyber-muted">Jul 2025 - Jan 2026</time>
+                            <p class="text-base font-normal text-cyber-text">DEPI (Digital Egypt Pioneers Initiative). Gained hands-on experience in analyzing security alerts, incident response, and vulnerability assessment.</p>
+                        </li>
+                        <li class="mb-10 ml-6">
+                            <span class="absolute flex items-center justify-center w-6 h-6 bg-cyber-primary rounded-full -left-3 ring-8 ring-cyber-bg">
+                                <svg class="w-3 h-3 text-cyber-bg" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path></svg>
+                            </span>
+                            <h4 class="flex items-center mb-1 text-lg font-semibold text-white">Cybersecurity Trainee</h4>
+                            <time class="block mb-2 text-sm font-normal leading-none text-cyber-muted">Jan 2024 - Dec 2024</time>
+                            <p class="text-base font-normal text-cyber-text">ITI Egypt. Trained in Network Fundamentals, Ethical Hacking, and gained hands-on experience with Palo Alto (PCCET) and Fortinet (NSE4) firewalls.</p>
+                        </li>
+                        <li class="ml-6">
+                            <span class="absolute flex items-center justify-center w-6 h-6 bg-cyber-primary rounded-full -left-3 ring-8 ring-cyber-bg">
+                                <svg class="w-3 h-3 text-cyber-bg" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path></svg>
+                            </span>
+                            <h4 class="flex items-center mb-1 text-lg font-semibold text-white">B.Sc. in Computers and Artificial Intelligence</h4>
+                            <time class="block mb-2 text-sm font-normal leading-none text-cyber-muted">2022 - 2026</time>
+                            <p class="text-base font-normal text-cyber-text">Fayoum University - Fayoum, Egypt.</p>
+                        </li>
+                    </ol>
+                </div>
+                
+                <!-- Certifications -->
+                <div>
+                    <h3 class="font-mono text-2xl font-bold text-cyber-secondary mb-8">// Certification_Badges</h3>
+                    <div class="flex flex-wrap gap-4">
+                        <div class="bg-cyber-surface border border-cyber-primary/50 text-center p-4 rounded-lg flex-grow">
+                            <span class="font-mono font-bold text-cyber-primary">CompTIA Security+</span>
+                            <span class="block text-xs text-cyber-muted">(2025)</span>
+                        </div>
+                        <div class="bg-cyber-surface border border-cyber-primary/50 text-center p-4 rounded-lg flex-grow">
+                            <span class="font-mono font-bold text-cyber-primary">CCNA</span>
+                            <span class="block text-xs text-cyber-muted">(2025)</span>
+                        </div>
+                        <div class="bg-cyber-surface border border-cyber-primary/50 text-center p-4 rounded-lg flex-grow">
+                            <span class="font-mono font-bold text-cyber-primary">Google Cybersecurity</span>
+                            <span class="block text-xs text-cyber-muted">(2025)</span>
+                        </div>
+                        <div class="bg-cyber-surface border border-cyber-muted/30 text-center p-4 rounded-lg flex-grow">
+                            <span class="font-mono font-bold text-white">ITI Cyber Security</span>
+                            <span class="block text-xs text-cyber-muted">(2024)</span>
+                        </div>
+                        <div class="bg-cyber-surface border border-cyber-muted/30 text-center p-4 rounded-lg flex-grow">
+                            <span class="font-mono font-bold text-white">DEPI Incident Response</span>
+                            <span class="block text-xs text-cyber-muted">(2025)</span>
+                        </div>
+                        <div class="bg-cyber-surface border border-cyber-muted/30 text-center p-4 rounded-lg flex-grow">
+                            <span class="font-mono font-bold text-white">Cisco Networking</span>
+                            <span class="block text-xs text-cyber-muted">(2025)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== Contact Section ===== -->
+        <section id="contact" class="py-20 text-center section-hidden">
+            <h2 class="text-3xl md:text-4xl font-mono font-bold text-white mb-6">
+                <span class="text-cyber-primary">[</span> Let's Build a Secure Future <span class="text-cyber-primary">]</span>
+            </h2>
+            <p class="text-lg text-cyber-text max-w-xl mx-auto mb-10">
+                I'm actively seeking opportunities where I can apply my skills in incident response and threat analysis. If you're looking for a motivated and hands-on analyst, let's connect.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-6">
+                <a href="mailto:ea2073@fayoum.edu.eg" class="font-mono text-lg text-cyber-primary hover:text-green-300 transition-colors flex items-center gap-2">
+                    <!-- Mail Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                    ea2073@fayoum.edu.eg
+                </a>
+                <span class="hidden sm:block text-cyber-muted">|</span>
+                <a href="https://linkedin.com/in/elsayed-elkholy" target="_blank" rel="noopener noreferrer" class="font-mono text-lg text-cyber-primary hover:text-green-300 transition-colors flex items-center gap-2">
+                    <!-- LinkedIn Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+                    /in/elsayed-elkholy
+                </a>
+                <span class="hidden sm:block text-cyber-muted">|</span>
+                <a href="httpsa://github.com/YOUR_USERNAME" target="_blank" rel="noopener noreferrer" class="font-mono text-lg text-cyber-primary hover:text-green-300 transition-colors flex items-center gap-2">
+                    <!-- GitHub Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                    /github
+                </a>
+                <span class="hidden sm:block text-cyber-muted">|</span>
+                 <a href="tel:+201016844223" class="font-mono text-lg text-cyber-primary hover:text-green-300 transition-colors flex items-center gap-2">
+                    <!-- Phone Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                    +20 1016844223
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-cyber-surface/30 border-t border-cyber-muted/30">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center">
+            <p class="text-cyber-muted font-mono">
+                ElSayed Elkholy &copy; 2025 // Built with 0s and 1s
+            </p>
+        </div>
+    </footer>
+
+    <!-- ===== Modals (Case Studies) ===== -->
+
+    <!-- Wazuh Modal -->
+    <div id="wazuh-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden" onclick="closeModal('wazuh-modal')">
+        <div class="bg-cyber-surface w-full max-w-3xl rounded-lg shadow-lg overflow-hidden border border-cyber-primary/50 animate-fade-in" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center p-4 border-b border-cyber-muted/30">
+                <h3 class="font-mono text-xl font-bold text-white">Case Study: Wazuh SIEM</h3>
+                <button onclick="closeModal('wazuh-modal')" class="text-cyber-muted hover:text-white">&times;</button>
+            </div>
+            <div class="p-6 max-h-[80vh] overflow-y-auto">
+                <img src="https://placehold.co/800x400/0a0f18/16a34a?text=Wazuh+Dashboard+Alert" alt="Wazuh Dashboard" class="w-full rounded-md mb-4">
+                <h4 class="font-mono text-lg font-bold text-cyber-secondary mb-2">// Objective</h4>
+                <p class="text-cyber-text mb-4">To build and configure a complete SIEM solution using Wazuh to detect and automatically respond to a simulated attack by blocking the attacker's IP.</p>
+                <h4 class="font-mono text-lg font-bold text-cyber-secondary mb-2">// Process</h4>
+                <ol class="list-decimal list-inside text-cyber-text space-y-2 mb-4">
+                    <li>Installed Wazuh server, indexer, and dashboard on an Ubuntu server.</li>
+                    <li>Deployed Wazuh agents on both Ubuntu (hosting Apache) and Windows endpoints.</li>
+                    <li>Configured "Active Response" to trigger a script blocking malicious IPs for 60 seconds.</li>
+                    <li>Simulated a web server attack from a malicious IP.</li>
+                </ol>
+
+                <h4 class="font-mono text-lg font-bold text-cyber-secondary mb-2 mt-6">// Code Snippet (ossec.conf)</h4>
+                <p class="text-cyber-text mb-4">This is the most critical part. Below is the actual Active Response configuration used to block the attacker.</p>
+                <pre class="bg-cyber-bg p-4 rounded-md overflow-x-auto">
+<code class="language-xml text-sm font-mono text-cyber-text">
+&lt;!-- This is a placeholder. Paste your actual code here. --&gt;
+&lt;ossec_config&gt;
+  &lt;command&gt;
+    &lt;name&gt;firewall-block&lt;/name&gt;
+    &lt;executable&gt;firewall-cmd&lt;/executable&gt;
+    &lt;expect&gt;srcip&lt;/expect&gt;
+    &lt;timeout_allowed&gt;yes&lt;/timeout_allowed&gt;
+  &lt;/command&gt;
+
+  &lt;active-response&gt;
+    &lt;command&gt;firewall-block&lt;/command&gt;
+    &lt;location&gt;local&lt;/location&gt;
+    &lt;rules_id&gt;100100&lt;/rules_id&gt; &lt;!-- Example Rule ID --&gt;
+    &lt;timeout&gt;60&lt;/timeout&gt;
+  &lt;/active-response&gt;
+&lt;/ossec_config&gt;
+</code>
+                </pre>
+
+                <h4 class="font-mono text-lg font-bold text-cyber-secondary mb-2 mt-6">// Outcome</h4>
+                <p class="text-cyber-text">Wazuh successfully detected the attack pattern, generated an alert, and automatically triggered the Active Response, blocking the attacker's IP from accessing the server. This project proved hands-on competence in SIEM deployment and automated incident response.</p>
+            
+                <h4 class="font-mono text-lg font-bold text-cyber-secondary mt-6 mb-2">// Tools Used</h4>
+                <div class="flex flex-wrap gap-2 font-mono">
+                    <span class="bg-cyber-bg px-3 py-1 rounded-full text-sm font-mono text-cyber-primary">Wazuh</span>
+                    <span class="bg-cyber-bg px-3 py-1 rounded-full text-sm font-mono text-cyber-text">Ubuntu Server</span>
+                    <span class="bg-cyber-bg px-3 py-1 rounded-full text-sm font-mono text-cyber-text">Windows</span>
+                    <span class="bg-cyber-bg px-3 py-1 rounded-full text-sm font-mono text-cyber-text">Apache</span>
+                    <span class="bg-cyber-bg px-3 py-1 rounded-full text-sm font-mono text-cyber-text">Active Response</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SOC Modal -->
+    <div id="soc-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden" onclick="closeModal('soc-modal')">
+        <div class="bg-cyber-surface w-full max-w-3xl rounded-lg shadow-lg overflow-hidden border border-cyber-primary/50 animate-fade-in" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center p-4 border-b border-cyber-muted/30">
+                <h3 class="font-mono text-xl font-bold text-white">Case Study: SOC Simulation (TryHackMe)</h3>
+                <button onclick="closeModal('soc-modal')" class="text-cyber-muted hover:text-white">&times;</button>
+            </div>
+            <div class="p-6 max-h-[80vh] overflow-y-auto">
+                <img src="https://placehold.co/800x400/0a0f18/16a34a?text=Wireshark+Packet+Analysis" alt="SOC Lab" class="w-full rounded-md mb-4">
+                <h4 class="font-mono text-lg font-bold text-cyber-secondary mb-2">// Objective</h4>
+                <p class="text-cyber-text mb-4">To practice real-world Security Operations Center (SOC) workflows by analyzing logs and network traffic to identify and mitigate threats in a simulated environment.</p>
+                <h4 class="font-mono text-lg font-bold text-cyber-secondary mb-2">// Process</h4>
+                <ol class="list-decimal list-inside text-cyber-text space-y-2 mb-4">
+                    <li>Completed a series of TryHackMe labs focused on SOC operations.</li>
+                    <li>Used Wireshark to analyze captured network traffic (PCAPs) for anomalies and signs of compromise.</li>
+                    <li>Cross-referenced findings with security logs (e.g., firewall, web server) to build a timeline of an attack.</li>
+                    <li>Developed incident response workflows to contain and remediate the simulated threats.</li>
+                </ol>
+                <h4 class="font-mono text-lg font-bold text-cyber-secondary mb-2">// Outcome</h4>
+                <p class="text-cyber-text">Successfully identified multiple cyber threats, including reconnaissance and exploitation attempts. This project strengthened skills in log analysis, traffic analysis (Wireshark), and incident response procedures, simulating the high-pressure environment of a real SOC.</p>
+            
+                <h4 class="font-mono text-lg font-bold text-cyber-secondary mt-6 mb-2">// Tools Used</h4>
+                <div class="flex flex-wrap gap-2 font-mono">
+                    <span class="bg-cyber-bg px-3 py-1 rounded-full text-sm font-mono text-cyber-primary">TryHackMe</span>
+                    <span class="bg-cyber-bg px-3 py-1 rounded-full text-sm font-mono text-cyber-primary">Wireshark</span>
+                    <span class="bg-cyber-bg px-3 py-1 rounded-full text-sm font-mono text-cyber-text">Log Analysis</span>
+                    <span class="bg-cyber-bg px-3 py-1 rounded-full text-sm font-mono text-cyber-text">Incident Response</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PenTest Modal -->
+    <div id="pentest-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden" onclick="closeModal('pentest-modal')">
+        <div class="bg-cyber-surface w-full max-w-3xl rounded-lg shadow-lg overflow-hidden border border-cyber-primary/50 animate-fade-in" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center p-4 border-b border-cyber-muted/30">
+                <h3 class="font-mono text-xl font-bold text-white">Case Study: Penetration Testing Labs</h3>
+                <button onclick="closeModal('pentest-modal')" class="text-cyber-muted hover:text-white">&times;</button>
+            </div>
+            <div class="p-6 max-h-[80vh] overflow-y-auto">
+                <img src="https://placehold.co/800x400/0a0f18/16a34a?text=Metasploit+Exploit+Success" alt="PenTest Lab" class="w-full rounded-md mb-4">
+                <h4 class="font-mono text-lg font-bold text-cyber-secondary mb-2">// Objective</h4>
+                <p class="text-cyber-text mb-4">To apply ethical hacking techniques in a controlled lab environment to identify and exploit vulnerabilities, strengthening offensive security skills.</p>
+                <h4 class="font-mono text-lg font-bold text-cyber-secondary mb-2">// Process</h4>
+                <ol class="list-decimal list-inside text-cyber-text space-y-2 mb-4">
+                    <li>Utilized Kali Linux as the primary attack platform.</li>
+                    <li>Performed network reconnaissance and enumeration on target machines within the TryHackMe labs.</li>
+                    <li>Used Metasploit to search for, configure, and launch exploits against identified vulnerabilities.</li>
+                    <li>Practiced privilege escalation and lateral movement post-exploitation.</li>
+                </ol>
+                <h4 class="font-mono text-lg font-bold text-cyber-secondary mb-2">// Outcome</h4>
+                <p class="text-cyber-text">Gained practical experience in the full penetration testing lifecycle, from reconnaissance to exploitation. This project solidified my understanding of attacker methodologies and the importance of robust vulnerability management.</p>
+            
+                <h4 class="font-mono text-lg font-bold text-cyber-secondary mt-6 mb-2">// Tools Used</h4>
+                <div class="flex flex-wrap gap-2 font-mono">
+                    <span class="bg-cyber-bg px-3 py-1 rounded-full text-sm font-mono text-cyber-primary">TryHackMe</span>
+                    <span class="bg-cyber-bg px-3 py-1 rounded-full text-sm font-mono text-cyber-primary">Metasploit</span>
+                    <span class="bg-cyber-bg px-3 py-1 rounded-full text-sm font-mono text-cyber-primary">Kali Linux</span>
+                    <span class="bg-cyber-bg px-3 py-1 rounded-full text-sm font-mono text-cyber-text">Vulnerability Scanning</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Wireshark Modal -->
+    <div id="wireshark-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden" onclick="closeModal('wireshark-modal')">
+        <div class="bg-cyber-surface w-full max-w-3xl rounded-lg shadow-lg overflow-hidden border border-cyber-primary/50 animate-fade-in" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center p-4 border-b border-cyber-muted/30">
+                <h3 class="font-mono text-xl font-bold text-white">Case Study: Wireshark Network Analysis</h3>
+                <button onclick="closeModal('wireshark-modal')" class="text-cyber-muted hover:text-white">&times;</button>
+            </div>
+            <div class="p-6 max-h-[80vh] overflow-y-auto">
+                <img src="https://placehold.co/800x400/0a0f18/16a34a?text=Wireshark+Packet+Stream" alt="Wireshark" class="w-full rounded-md mb-4">
+                <h4 class="font-mono text-lg font-bold text-cyber-secondary mb-2">// Objective</h4>
+                <p class="text-cyber-text mb-4">To capture and analyze live network traffic to identify anomalies, potential security risks, and traffic patterns to support network optimization and security efforts.</p>
+                <h4 class="font-mono text-lg font-bold text-cyber-secondary mb-2">// Process</h4>
+                <ol class="list-decimal list-inside text-cyber-text space-y-2 mb-4">
+                    <li>Captured network packets on a local network segment using Wireshark.</li>
+                    <li>Applied display filters to isolate specific protocols (HTTP, DNS, TCP) and conversations.</li>
+                    <li>Analyzed packet details to identify anomalies such as unencrypted protocols, unusual traffic patterns, or error-filled streams.</li>
+                    <li>Documented findings and recommended mitigation strategies (e.g., implementing HTTPS, firewall rules).</li>
+                </ol>
+                <h4 class="font-mono text-lg font-bold text-cyber-secondary mb-2">// Outcome</h4>
+                <p class="text-cyber-text">Demonstrated proficiency in using Wireshark for deep packet inspection. Successfully identified several areas for security enhancement and summarized network behavior, providing actionable intelligence from raw packet data.</p>
+            
+                <h4 class="font-mono text-lg font-bold text-cyber-secondary mt-6 mb-2">// Tools Used</h4>
+                <div class="flex flex-wrap gap-2 font-mono">
+                    <span class="bg-cyber-bg px-3 py-1 rounded-full text-sm font-mono text-cyber-primary">Wireshark</span>
+                    <span class="bg-cyber-bg px-3 py-1 rounded-full text-sm font-mono text-cyber-text">Network Analysis</span>
+                    <span class="bg-cyber-bg px-3 py-1 rounded-full text-sm font-mono text-cyber-text">TCP/IP</span>
+                    <span class="bg-cyber-bg px-3 py-1 rounded-full text-sm font-mono text-cyber-text">DNS</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cisco Modal -->
+    <div id="cisco-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden" onclick="closeModal('cisco-modal')">
+        <div class="bg-cyber-surface w-full max-w-3xl rounded-lg shadow-lg overflow-hidden border border-cyber-primary/50 animate-fade-in" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center p-4 border-b border-cyber-muted/30">
+                <h3 class="font-mono text-xl font-bold text-white">Case Study: Network Security Simulation</h3>
+                <button onclick="closeModal('cisco-modal')" class="text-cyber-muted hover:text-white">&times;</button>
+            </div>
+            <div class="p-6 max-h-[80vh] overflow-y-auto">
+                <img src="https://placehold.co/800x400/0a0f18/16a34a?text=Cisco+Packet+Tracer+Topology" alt="Cisco" class="w-full rounded-md mb-4">
+                <h4 class="font-mono text-lg font-bold text-cyber-secondary mb-2">// Objective</h4>
+                <p class="text-cyber-text mb-4">To design and build a secure, resilient, and segmented LAN topology using Cisco Packet Tracer, implementing routing protocols and access control lists (ACLs).</p>
+                <h4 class="font-mono text-lg font-bold text-cyber-secondary mb-2">// Process</h4>
+                <ol class="list-decimal list-inside text-cyber-text space-y-2 mb-4">
+                    <li>Designed a multi-department LAN topology with routers, switches, and end-devices.</li>
+                    <li>Implemented VLANs to segment network traffic (e.g., 'Sales', 'Engineering', 'Guests').</li>
+                    <li>Configured OSPF as the dynamic routing protocol for inter-VLAN communication.</li>
+                    <li>Applied standard and extended ACLs to filter traffic, permitting only necessary services and blocking unauthorized access.</li>
+                    <li>Simulated network attacks (e.g., DoS, unauthorized access attempts) to test topology resilience.</li>
+                </ol>
+                <h4 class="font-mono text-lg font-bold text-cyber-secondary mb-2">// Outcome</h4>
+                <p class="text-cyber-text">Successfully built a secure and functional network topology that adhered to security best practices. The ACLs effectively blocked simulated attacks while allowing legitimate traffic, demonstrating a strong grasp of network security principles and Cisco configuration.</p>
+            
+                <h4 class="font-mono text-lg font-bold text-cyber-secondary mt-6 mb-2">// Tools Used</h4>
+                <div class="flex flex-wrap gap-2 font-mono">
+                    <span class="bg-cyber-bg px-3 py-1 rounded-full text-sm font-mono text-cyber-primary">Cisco Packet Tracer</span>
+                    <span class="bg-cyber-bg px-3 py-1 rounded-full text-sm font-mono text-cyber-text">VLANs</span>
+                    <span class="bg-cyber-bg px-3 py-1 rounded-full text-sm font-mono text-cyber-text">OSPF</span>
+                    <span class="bg-cyber-bg px-3 py-1 rounded-full text-sm font-mono text-cyber-text">ACLs</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            function updateClock() {
+                const clockElement = document.getElementById('live-clock');
+                if (!clockElement) return;
+                
+                const now = new Date();
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                const seconds = String(now.getSeconds()).padStart(2, '0');
+                
+                // You can change the date format to your preference
+                const date = now.toLocaleDateString('en-US', {
+                    weekday: 'short',
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+                
+                clockElement.textContent = `[ ${date} // ${hours}:${minutes}:${seconds} ]`;
+            }
+            
+            updateClock(); // Initial call
+            setInterval(updateClock, 1000); // Update every second
+
+            // --- Typing Animation ---
+            const typingText = document.getElementById('typing-text');
+            const roles = [
+                "Cybersecurity Analyst",
+                "Incident Responder",
+                "SOC Specialist",
+                "Ethical Hacker",
+                "Network Security Engineer"
+            ];
+            let roleIndex = 0;
+            let charIndex = 0;
+            let isDeleting = false;
+
+            function type() {
+                if (!typingText) return; // Guard clause
+                const currentRole = roles[roleIndex];
+                let currentText = '';
+
+                if (isDeleting) {
+                    currentText = currentRole.substring(0, charIndex - 1);
+                    charIndex--;
+                } else {
+                    currentText = currentRole.substring(0, charIndex + 1);
+                    charIndex++;
+                }
+
+                typingText.textContent = currentText;
+                typingText.classList.add('border-r-4', 'border-white');
+
+                let typeSpeed = isDeleting ? 50 : 150;
+
+                if (!isDeleting && charIndex === currentRole.length) {
+                    typeSpeed = 2000; // Pause at end
+                    isDeleting = true;
+                } else if (isDeleting && charIndex === 0) {
+                    isDeleting = false;
+                    roleIndex = (roleIndex + 1) % roles.length;
+                    typeSpeed = 500; // Pause before new word
+                }
+
+                setTimeout(type, typeSpeed);
+            }
+            type();
+
+            // --- Active Nav Link on Scroll ---
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const id = entry.target.getAttribute('id');
+                    const navLink = document.querySelector(`.nav-link[href="#${id}"]`);
+                    
+                    if (entry.isIntersecting) {
+                        // Make section visible on scroll
+                        entry.target.classList.add('section-visible');
+                        
+                        // Highlight nav link
+                        navLinks.forEach(link => link.classList.remove('active', 'text-cyber-primary'));
+                        if (navLink) {
+                            navLink.classList.add('active', 'text-cyber-primary');
+                        }
+                    }
+                });
+            }, { 
+                threshold: 0.1
+            }); 
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+
+            // --- Interactive Particle Background ---
+            const canvas = document.getElementById('particle-bg');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            let particles = [];
+            const particleCount = Math.floor((canvas.width * canvas.height) / 15000);
+            const mouse = {
+                x: null,
+                y: null,
+                radius: 150
+            };
+
+            window.addEventListener('mousemove', (event) => {
+                mouse.x = event.x;
+                mouse.y = event.y;
+            });
+
+            window.addEventListener('mouseout', () => {
+                mouse.x = null;
+                mouse.y = null;
+            });
+
+            class Particle {
+                constructor(x, y, dirX, dirY, size, color) {
+                    this.x = x;
+                    this.y = y;
+                    this.dirX = dirX;
+                    this.dirY = dirY;
+                    this.size = size;
+                    this.color = color;
+                }
+
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
+                    ctx.fillStyle = this.color;
+                    ctx.fill();
+                }
+
+                update() {
+                    if (this.x > canvas.width || this.x < 0) {
+                        this.dirX = -this.dirX;
+                    }
+                    if (this.y > canvas.height || this.y < 0) {
+                        this.dirY = -this.dirY;
+                    }
+                    this.x += this.dirX;
+                    this.y += this.dirY;
+                    this.draw();
+                }
+            }
+
+            function init() {
+                particles = [];
+                for (let i = 0; i < particleCount; i++) {
+                    let size = (Math.random() * 2) + 1;
+                    let x = (Math.random() * ((canvas.width - size * 2) - (size * 2)) + size * 2);
+                    let y = (Math.random() * ((canvas.height - size * 2) - (size * 2)) + size * 2);
+                    let dirX = (Math.random() * 0.4) - 0.2;
+                    let dirY = (Math.random() * 0.4) - 0.2;
+                    let color = 'rgba(22, 163, 74, 0.3)'; // cyber-primary at 30%
+                    particles.push(new Particle(x, y, dirX, dirY, size, color));
+                }
+            }
+
+            function connect() {
+                let opacityValue = 1;
+                for (let a = 0; a < particles.length; a++) {
+                    for (let b = a + 1; b < particles.length; b++) {
+                        let distance = ((particles[a].x - particles[b].x) * (particles[a].x - particles[b].x))
+                                     + ((particles[a].y - particles[b].y) * (particles[a].y - particles[b].y));
+                        
+                        if (distance < (canvas.width/7) * (canvas.height/7)) {
+                            opacityValue = 1 - (distance/15000);
+                            ctx.strokeStyle = `rgba(200, 216, 232, ${opacityValue * 0.1})`; // cyber-text at 10%
+                            ctx.lineWidth = 1;
+                            ctx.beginPath();
+                            ctx.moveTo(particles[a].x, particles[a].y);
+                            ctx.lineTo(particles[b].x, particles[b].y);
+                            ctx.stroke();
+                        }
+                    }
+
+                    // Connect to mouse
+                    if (mouse.x) {
+                        let distanceToMouse = ((particles[a].x - mouse.x) * (particles[a].x - mouse.x))
+                                           + ((particles[a].y - mouse.y) * (particles[a].y - mouse.y));
+                        if (distanceToMouse < mouse.radius * mouse.radius) {
+                            opacityValue = 1 - (distanceToMouse / (mouse.radius * mouse.radius));
+                            ctx.strokeStyle = `rgba(22, 163, 74, ${opacityValue * 0.5})`; // cyber-primary at 50%
+                            ctx.lineWidth = 1;
+                            ctx.beginPath();
+                            ctx.moveTo(particles[a].x, particles[a].y);
+                            ctx.lineTo(mouse.x, mouse.y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+            }
+
+            function animate() {
+                requestAnimationFrame(animate);
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                for (let i = 0; i < particles.length; i++) {
+                    particles[i].update();
+                }
+                connect();
+            }
+
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                mouse.radius = 150;
+                init();
+            });
+
+            init();
+            animate();
+            
+            // --- Mobile Menu Toggle ---
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const menuIconOpen = document.getElementById('menu-icon-open');
+            const menuIconClose = document.getElementById('menu-icon-close');
+
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+                menuIconOpen.classList.toggle('hidden');
+                menuIconClose.classList.toggle('hidden');
+            });
+            
+            // Close mobile menu when a link is clicked
+            document.querySelectorAll('#mobile-menu .nav-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                    menuIconOpen.classList.remove('hidden');
+                    menuIconClose.classList.add('hidden');
+                });
+            });
+
+        }); // <-- This was the missing opening brace
+
+        // --- Modal Functions ---
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.remove('hidden');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+    </script>
+
+</body>
+</html>
