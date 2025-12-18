@@ -12,7 +12,7 @@ The goal was to demonstrate technical execution by breaking down a hardcoded des
 
 🚀 Live Demo
 
-[INSERT YOUR HUBSPOT LIVE PAGE URL HERE]
+[https://147129831.hs-sites-eu1.com/elsayed-elkholy-portfolio]
 
 🛠️ Technical Implementation
 
