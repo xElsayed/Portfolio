@@ -1,0 +1,44 @@
+<section id="projects" class="py-20 section-hidden">
+    <h2 class="text-3xl md:text-4xl font-mono font-bold text-white mb-12">
+        <span class="text-cyber-primary">[</span> Project Case Studies <span class="text-cyber-primary">]</span>
+    </h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+        <!-- Loop for Cards -->
+        {% for project in module.projects %}
+        <div class="bg-cyber-surface rounded-lg border border-cyber-muted/30 overflow-hidden flex flex-col transition-all duration-300 hover:shadow-lg hover:shadow-cyber-primary/30 hover:-translate-y-1">
+            <div class="h-48 w-full flex items-center justify-center bg-cyber-bg/50">
+                <svg class="w-24 h-24 text-cyber-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 16l-4-16M6 9h12M6 15h12"></path></svg>
+            </div>
+            <div class="p-6 flex flex-col flex-grow">
+                <h3 class="font-mono text-xl font-bold text-white">{{ project.title }}</h3>
+                <p class="text-cyber-text mt-2 mb-4 flex-grow">{{ project.description }}</p>
+                <div class="flex flex-wrap gap-2 mb-6">
+                    {% set tags = project.tags|split(',') %}
+                    {% for tag in tags %}
+                    <span class="bg-cyber-bg px-3 py-1 rounded-full text-sm font-mono text-cyber-primary">{{ tag }}</span>
+                    {% endfor %}
+                </div>
+                <button onclick="openModal('{{ project.unique_id }}')" class="mt-auto w-full px-4 py-2 bg-cyber-bg text-cyber-primary font-mono rounded-md hover:bg-cyber-primary hover:text-cyber-bg transition-colors">
+                    View Case Study
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Loop for Modals -->
+{% for project in module.projects %}
+<div id="{{ project.unique_id }}" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden" onclick="closeModal('{{ project.unique_id }}')">
+    <div class="bg-cyber-surface w-full max-w-3xl rounded-lg shadow-lg overflow-hidden border border-cyber-primary/50 animate-fade-in" onclick="event.stopPropagation()">
+        <div class="flex justify-between items-center p-4 border-b border-cyber-muted/30">
+            <h3 class="font-mono text-xl font-bold text-white">Case Study: {{ project.title }}</h3>
+            <button onclick="closeModal('{{ project.unique_id }}')" class="text-cyber-muted hover:text-white">&times;</button>
+        </div>
+        <div class="p-6 max-h-[80vh] overflow-y-auto text-cyber-text">
+            {{ project.modal_content }}
+        </div>
+    </div>
+</div>
+{% endfor %}
